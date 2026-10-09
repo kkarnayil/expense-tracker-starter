@@ -3,6 +3,7 @@ import './App.css'
 import Summary from './Summary'
 import AddTransaction from './AddTransaction'
 import TransactionList from './TransactionList'
+import SpendingChart from './SpendingChart'
 
 const categories = ["food", "housing", "utilities", "transport", "entertainment", "salary", "other"];
 
@@ -28,12 +29,21 @@ function App() {
 
   return (
     <div className="app">
-      <h1>Finance Tracker</h1>
-      <p className="subtitle">Track your income and expenses</p>
+      <header className="masthead">
+        <h1>Finance tracker</h1>
+      </header>
 
-      <Summary transactions={transactions} />
-      <AddTransaction categories={categories} onAdd={handleAdd} />
-      <TransactionList transactions={transactions} categories={categories} onDelete={handleDelete} />
+      <main>
+        <Summary transactions={transactions} />
+
+        <div className="workspace">
+          <TransactionList transactions={transactions} categories={categories} onDelete={handleDelete} />
+          <aside className="side">
+            <AddTransaction categories={categories} onAdd={handleAdd} />
+            <SpendingChart transactions={transactions} />
+          </aside>
+        </div>
+      </main>
     </div>
   );
 }
