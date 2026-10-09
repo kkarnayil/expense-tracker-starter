@@ -22,9 +22,13 @@ No test runner is configured yet; there is no `test` script.
 
 - Stack: React 19 + Vite 7, plain JavaScript (`.jsx`), no TypeScript, no router, no state library, no backend.
 - Entry: `index.html` loads `src/main.jsx`, which renders `<App />` in `StrictMode` and imports the global styles in `src/index.css`.
-- The entire app lives in one component, `src/App.jsx`, styled by `src/App.css`. That component owns all state through `useState`: the transaction list (hard-coded seed data, held only in memory and lost on reload), the add-transaction form fields, and the type/category filters. Totals (income, expenses, balance) and the filtered list are derived on each render.
-- Transaction shape: `{ id, description, amount, type: "income" | "expense", category, date: "YYYY-MM-DD" }`. `amount` is a **number**; the form's number input yields a string, so `handleSubmit` converts it with `Number()` before storing.
-- The categories list is a constant inside `App` and is used by both the form and the filter dropdowns.
+- Components live flat in `src/` (no `components/` folder) and share one stylesheet, `src/App.css`. Data flows one way: `App` holds the data and passes it down as props, and children report changes back through callbacks.
+  - `App.jsx`: owns the transaction list via `useState` (hard-coded seed data, held only in memory and lost on reload) and `handleAdd`, which appends using a functional update (`prev => [...prev, t]`). It renders the three children below.
+  - `Summary.jsx`: receives `transactions` and derives total income, total expenses and the balance on each render. It holds no state.
+  - `AddTransaction.jsx`: receives `categories` and `onAdd`. It owns the form-field state, builds the new transaction (`id: Date.now()`, today's date) and calls `onAdd`, then resets the form.
+  - `TransactionList.jsx`: receives `transactions` and `categories`. It owns the type/category filter state and derives the filtered list it renders as a table.
+- Transaction shape: `{ id, description, amount, type: "income" | "expense", category, date: "YYYY-MM-DD" }`. `amount` is a **number**; the form's number input yields a string, so `AddTransaction`'s `handleSubmit` converts it with `Number()` before storing.
+- The `categories` list is a module-level constant in `App.jsx`, passed as a prop to both `AddTransaction` (form dropdown) and `TransactionList` (filter dropdown).
 
 ## Lint rules worth knowing
 
